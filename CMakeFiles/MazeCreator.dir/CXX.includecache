@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Maze.cpp
+cstdlib
+-
+iostream
+-
+sys/time.h
+-
+Maze.h
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Maze.h
+Tile.h
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.h
+
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Maze.h
+Tile.h
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.h
+
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.cpp
+cstdio
+-
+Tile.h
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.h
+
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.h
+
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/main.cpp
+iostream
+-
+stdlib.h
+-
+Maze.h
+/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Maze.h
+
