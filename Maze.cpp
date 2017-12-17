@@ -3,9 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <sys/time.h>
 #include "Maze.h"
-#include "Tile.h"
 
 
 Maze::Maze(int height, int width) {
@@ -23,6 +21,17 @@ Maze::Maze(int height, int width) {
     }
 }
 
+/**
+ * Creates an initial path from the bottom of the maze to the top. This is created by taking a random walk travelling
+ * in a random direction at each Tile. In the case that the current Tile is completely surrounded by connected tiles,
+ * the path is retraced until a valid move can be made.
+ *
+ * The current direction are used:
+ * 0 - top
+ * 1 - bot
+ * 2 - left
+ * 3 - right
+ */
 void Maze::create_initial_path(){
     // start at a random position on the bottom of the maze
     int x = rand() % this->width;
@@ -40,7 +49,6 @@ void Maze::create_initial_path(){
             // Move backwards to the other connection tile
             int* r = find_connected(x, y);
 
-            printf("(%d, %d) -> (%d, %d)\n", x, y, r[0], r[1]);
             // Close the opened path
             // Find the direction that we are moving back to
             if(r[1] == y - 1) {
@@ -60,18 +68,13 @@ void Maze::create_initial_path(){
                 this->get_tile(x, y)->right = blocked;
                 this->get_tile(x + 1, y)->left = blocked;
             } else {
-              printf("Shouldn't get here");
+              throw "Path error.\n";
             }
 
             x = r[0];
             y = r[1];
         }
 
-        // Choose a direction to travel
-        // 0 - top
-        // 1 - bot
-        // 2 - left
-        // 3 - right
         int dir = rand() % 4;
 
         if(dir == 0) {
@@ -131,13 +134,17 @@ void Maze::create_initial_path(){
     this->stuck_to_unconnected();
 }
 
-
+/**
+ * Creates a path from each point which connects to both the start and end of the maze, however these paths cannot
+ * form a loop.
+ *
+ * After this method there is still only a single path with no backtracing from the start to end of the maze.
+ */
 void Maze::create_other_paths() {
     // Loop over each location
     for(int i=0; i < this->height * this->width; i++) {
         int x = i % this->width;
         int y = i / this->width;
-        //printf("i: %d x: %d y: %d\n", i, x, y);
 
         // Check if this location is connected
         if(this->get_tile(x, y)->isConnected()) {
@@ -165,13 +172,10 @@ void Maze::create_other_paths() {
             // After finding a connected tile, reset all stuck to connected
 
             if(this->is_temp_surrounded(x, y)) {
-                printf("is surrounded.\n");
-
                 // Mark as stuck
                 this->get_tile(x, y)->connection = stuck;
 
                 // Move to a tile that is tempConnected in the order: top, right, bot, left
-
                 if(y != 0 && this->get_tile(x, y - 1)->connection == tempConnected) {
                     y = y - 1;
                 } else if(x != this->width - 1 && this->get_tile(x + 1, y)->connection == tempConnected) {
@@ -181,21 +185,12 @@ void Maze::create_other_paths() {
                 } else if(y != this->height - 1 && this->get_tile(x, y + 1)->connection == tempConnected) {
                     y = y + 1;
                 } else {
-                    printf("Should never get here: x:%d y%d. \n",x , y);
-                    this->print();
-                    this->print_connections();
-                    this->stuck_to_temp();
+                    throw "Path Error.\n";
                 }
 
                 continue;
             }
 
-            /*
-             * 0 - top
-             * 1 - bot
-             * 2 - left
-             * 3 - right
-             */
             int dir = rand() % 4;
 
             // Check if a move upwards is valid
@@ -220,10 +215,6 @@ void Maze::create_other_paths() {
 
                 x = x + 1;
                 this->get_tile(x, y)->left = 0;
-            } else {
-//                printf("x: %d, y: %d\n", x, y);
-//                this->print();
-//                this->print_connections();
             }
 
             // Mark as temp connected or end
@@ -238,13 +229,16 @@ void Maze::create_other_paths() {
         // Reset all stuck to connected
         this->stuck_to_connected();
         this->temp_to_connected();
-
     }
-
-
 }
 
-
+/**
+ * Determines if the given Tile is completely surrounded by connected or stuck Tiles.
+ *
+ * @param x The x location of the Tile to check.
+ * @param y The y location of the Tile to check.
+ * @return True if the Tile is completely surrounded, False otherwise.
+ */
 bool Maze::is_surrounded(int x, int y){
     if(
             (this->maze[y * this->width + x]->isTraversed()) &&
@@ -259,7 +253,13 @@ bool Maze::is_surrounded(int x, int y){
     return false;
 }
 
-
+/**
+ * Determines if the given Tile is completely surrounded by temporarily connected or stuck Tiles.
+ *
+ * @param x The x location of the Tile to check.
+ * @param y The y location of the Tile to check.
+ * @return True if the Tile is completely surrounded, False otherwise.
+ */
 bool Maze::is_temp_surrounded(int x, int y) {
     if(     (y == 0 || this->get_tile(x, y - 1)->isTempOrStuck()) &&
             (y == this->height - 1 || this->get_tile(x, y + 1)->isTempOrStuck()) &&
@@ -273,13 +273,11 @@ bool Maze::is_temp_surrounded(int x, int y) {
 }
 
 
-
-// 0 1 2
-// 3 4 5
-// 6 7 8
-
+/**
+ * Displays the maze on the command line.
+ */
 void Maze::print() {
-    printf("\n\n");
+    printf("\n");
 
     //Print the top level
     for(int w=0; w < this->width; w++) {
@@ -310,10 +308,37 @@ void Maze::print() {
     }
 }
 
+/**
+ * Displays the connection status of each tile within the maze.
+ */
+void Maze::print_connections() {
+    for(int h=0; h < this->height; h++) {
+        for(int w=0; w < this->width; w++) {
+            printf("%d", this->get_tile(w, h)->connection);
+        }
+
+        printf("\n");
+    }
+}
+
+/**
+ * Returns the tile at the given x and y location.
+ *
+ * @param x The x location of the Tile to return.
+ * @param y The y location of the Tile to return.
+ * @return The Tile at the given location.
+ */
 Tile* Maze::get_tile(int x, int y) {
     return this->maze[y * this->width + x];
 }
 
+/**
+ * Finds a tile connected to the Tile at the given location and returns its location.
+ *
+ * @param x The x location of the Tile to find a connection to.
+ * @param y The y location of the Tile to find a connection to.
+ * @return An array of 2 ints which are the location of the connected Tile in the order x, y.
+ */
 int* Maze::find_connected(int x, int y) {
     int* result = (int*) malloc(2 * sizeof(int));
     result[0] = -1;
@@ -337,6 +362,9 @@ int* Maze::find_connected(int x, int y) {
     return result;
 }
 
+/**
+ * Change all stuck Tiles to the connected Tiles.
+ */
 void Maze::stuck_to_connected() {
     for(int i=0; i < this->height * this->width; i++) {
         if(this->maze[i]->connection == stuck) {
@@ -345,6 +373,9 @@ void Maze::stuck_to_connected() {
     }
 }
 
+/**
+ * Change all stuck Tiles to unconnected Tiles.
+ */
 void Maze::stuck_to_unconnected() {
     for(int i=0; i < this->height * this->width; i++) {
         if(this->maze[i]->connection == stuck) {
@@ -353,29 +384,13 @@ void Maze::stuck_to_unconnected() {
     }
 }
 
+/**
+ * Change all temporarily connected Tiles to connected Tiles.
+ */
 void Maze::temp_to_connected() {
     for(int i=0; i < this->height * this->width; i++) {
         if(this->maze[i]->connection == tempConnected) {
             this->maze[i]->connection = connected;
-        }
-    }
-}
-
-
-void Maze::print_connections() {
-    for(int h=0; h < this->height; h++) {
-        for(int w=0; w < this->width; w++) {
-            printf("%d", this->get_tile(w, h)->connection);
-        }
-
-        printf("\n");
-    }
-}
-
-void Maze::stuck_to_temp() {
-    for(int i=0; i < this->height * this->width; i++) {
-        if(this->maze[i]->connection == stuck) {
-            this->maze[i]->connection = tempConnected;
         }
     }
 }

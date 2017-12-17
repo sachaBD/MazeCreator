@@ -21,10 +21,6 @@ enum Edge {
 class Tile {
 
 public:
-    // Edges
-    // 0 - Open
-    // 1 - Closed
-    // 2 - Maze edge
     int top = blocked;
     int bot = blocked;
     int left = blocked;
@@ -33,6 +29,7 @@ public:
     int connection = unconnected;
 
     bool isTraversed();
+
     bool isConnected();
 
     bool from(int dirFrom);
