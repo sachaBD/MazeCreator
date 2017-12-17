@@ -5,17 +5,17 @@
 Maze* create_maze(int height, int width) {
     srand(time(NULL));
 
-    Maze maze = Maze(height, width);
+    Maze* maze = new Maze(height, width);
 
-    maze.create_initial_path();
+    maze->create_initial_path();
 
-    maze.print();
+    maze->print();
 
-    maze.create_other_paths();
+    maze->create_other_paths();
 
-    maze.print();
+    maze->print();
 
-    return &maze;
+    return maze;
 }
 
 int main(int argc, char** argv) {

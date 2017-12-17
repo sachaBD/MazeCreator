@@ -1,17 +1,6 @@
 //
 // Created by sacha on 12/15/17->
 
-/*
- * Notes:
- *  - Change stuck algorithm to backtrack until it finds a new valid path, then take that path
- *
- *
- */
-
-
-
-//
-
 #include <cstdlib>
 #include <iostream>
 #include <sys/time.h>
@@ -40,12 +29,10 @@ void Maze::create_initial_path(){
     int y = this->height - 1;
 
     // Enter the maze
-    this->maze[y * this->width + x]->bot = 0;
-    this->maze[y * this->width + x]->connection = 1;
+    this->get_tile(x, y)->bot = open;
+    this->get_tile(x, y)->connection = connected;
 
-//    printf("starts: %d, %d\n", x, y);
-//    this->print();
-
+    // Traverse the maze until the end of the top of the maze is reached.
     while(y > -1) {
         // printf("%d, %d\n", x, y);
         if(this->is_surrounded(x, y)) {
@@ -66,60 +53,53 @@ void Maze::create_initial_path(){
 
         if(dir == 0) {
             if (y == 0) {
-                this->maze[y * this->width + x]->top = 0;
-                this->maze[y * this->width + x]->connection = 1;
+                this->get_tile(x, y)->top = open;
+                this->get_tile(x, y)->connection = connected;
                 break;
             }
 
             // Check if it has already been traversed to
-            if (this->maze[(y - 1) * this->width + x]->isTraversed()) {
+            if (this->get_tile(x, y - 1)->isTraversed()) {
                 continue;
             }
 
             // Open the relevent edge
-            this->maze[y * this->width + x]->top = 0;
-            this->maze[(y - 1) * this->width + x]->bot = 0;
-            this->maze[(y - 1) * this->width + x]->connection = connected;
+            this->get_tile(x, y)->top = 0;
+            this->get_tile(x, y - 1)->bot = 0;
+            this->get_tile(x, y - 1)->connection = connected;
             // Move the current position
             y -= 1;
-        } else if(dir == 1) {
-            if(y == this->height - 1) {
-                continue;
-            }
+        } else if(dir == 1 && y != this->height - 1 && ! this->get_tile(x, y + 1)->isTraversed()) {
+            this->get_tile(x, y)->bot = 0;
 
-            if(this->maze[(y + 1) * this->width + x]->isTraversed()) {
-                continue;
-            }
-
-            this->maze[y * this->width + x]->bot = 0;
-            this->maze[(y + 1) * this->width + x]->top = 0;
-            this->maze[(y + 1) * this->width + x]->connection = connected;
             y += 1;
+            this->get_tile(x, y)->top = 0;
+            this->get_tile(x, y)->connection = connected;
         } else if(dir == 2) {
             if(x == 0) {
                 continue;
             }
 
-            if(this->maze[y * this->width + (x - 1)]->isTraversed()) {
+            if(this->get_tile(x - 1, y)->isTraversed()) {
                 continue;
             }
 
-            this->maze[y * this->width + x]->left = 0;
-            this->maze[y * this->width + (x-1)]->right = 0;
-            this->maze[y * this->width + (x-1)]->connection = connected;
+            this->get_tile(x, y)->left = 0;
+            this->get_tile(x - 1, y)->right = 0;
+            this->get_tile(x - 1, y)->connection = connected;
             x -= 1;
         } else if(dir == 3) {
             if(x == this->width - 1) {
                 continue;
             }
 
-            if(this->maze[y * this->width + (x + 1)]->isTraversed()) {
+            if(this->get_tile(x + 1, y)->isTraversed()) {
                 continue;
             }
 
-            this->maze[y * this->width + x]->right = 0;
-            this->maze[y * this->width + (x+1)]->left = 0;
-            this->maze[y * this->width + (x+1)]->connection = connected;
+            this->get_tile(x, y)->right = 0;
+            this->get_tile(x + 1, y)->left = 0;
+            this->get_tile(x + 1, y)->connection = connected;
             x += 1;
         }
     }
@@ -276,54 +256,34 @@ bool Maze::is_temp_surrounded(int x, int y) {
 // 6 7 8
 
 void Maze::print() {
-    char* currentLine;
-    int counter;
     printf("\n\n");
-
-    currentLine = (char*) malloc(4* this->width * sizeof(char));
-    counter = 0;
 
     //Print the top level
     for(int w=0; w < this->width; w++) {
         if (this->maze[w]->top != 0) {
-            currentLine[counter++] = ' ';
-            currentLine[counter++] = '_';
+            printf(" _");
         } else {
-            currentLine[counter++] = ' ';
-            currentLine[counter++] = ' ';
+            printf("  ");
         }
     }
-    std::cout << currentLine << std::endl;
+    printf("\n");
 
     for(int h=0; h < this->height; h++) {
-        currentLine = (char*) malloc(4* this->width * sizeof(char));
-        counter = 0;
-
-        char* currentLine = (char*) malloc(4 * this->width * sizeof(char));
-        int counter = 0;
-
-        currentLine[counter++] = '|';
+        printf("|");
         for(int w=0; w < this->width; w++) {
-//            if(this->maze[h * this->width + w]->left != 0) {
-//                currentLine[counter++] = '|';
-//            } else {
-//                currentLine[counter++] = '_';
-//            }
-
             if(this->maze[h * this->width + w]->bot != 0) {
-                currentLine[counter++] = '_';
+                printf("_");
             } else {
-                currentLine[counter++] = ' ';
+                printf(" ");
             }
 
             if(this->maze[h * this->width + w]->right != 0) {
-                currentLine[counter++] = '|';
+                printf("|");
             } else {
-                currentLine[counter++] = ' ';
+                printf(" ");
             }
         }
-
-        std::cout << currentLine << std::endl;
+        printf("\n");
     }
 }
 

@@ -10,8 +10,12 @@ enum TileState {
     unconnected = 0,
     connected = 1,
     stuck = 2,
-    tempConnected = 3,
-    tempStuck = 4
+    tempConnected = 3
+};
+
+enum Edge {
+    open = 0,
+    blocked = 1
 };
 
 class Tile {
@@ -21,14 +25,12 @@ public:
     // 0 - Open
     // 1 - Closed
     // 2 - Maze edge
-    int top = 1;
-    int bot = 1;
-    int left = 1;
-    int right = 1;
+    int top = blocked;
+    int bot = blocked;
+    int left = blocked;
+    int right = blocked;
 
-    int connection = 0;
-
-    Tile();
+    int connection = unconnected;
 
     bool isTraversed();
     bool isConnected();
