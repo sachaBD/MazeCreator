@@ -42,6 +42,8 @@ public:
     void print_connections();
 
     bool is_temp_surrounded(int x, int y);
+
+    void stuck_to_unconnected();
 };
 
 

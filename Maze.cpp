@@ -34,12 +34,35 @@ void Maze::create_initial_path(){
 
     // Traverse the maze until the end of the top of the maze is reached.
     while(y > -1) {
-        // printf("%d, %d\n", x, y);
         if(this->is_surrounded(x, y)) {
             this->get_tile(x, y)->connection = stuck;
 
-            //Move backwards to the other connection tile
+            // Move backwards to the other connection tile
             int* r = find_connected(x, y);
+
+            printf("(%d, %d) -> (%d, %d)\n", x, y, r[0], r[1]);
+            // Close the opened path
+            // Find the direction that we are moving back to
+            if(r[1] == y - 1) {
+                // Moving upwards, close top of current and bottom of next
+                this->get_tile(x, y)->top = blocked;
+                this->get_tile(x, y - 1)->bot = blocked;
+            } else if(r[1] == y + 1) {
+               // Moved downwards
+                this->get_tile(x, y)->bot = blocked;
+                this->get_tile(x, y + 1)->top = blocked;
+            } else if(r[0] == x - 1) {
+                // Moving to the left
+                this->get_tile(x, y)->left = blocked;
+                this->get_tile(x - 1, y)->right = blocked;
+            } else if(r[0] == x + 1) {
+                // Moving to the right
+                this->get_tile(x, y)->right = blocked;
+                this->get_tile(x + 1, y)->left = blocked;
+            } else {
+              printf("Shouldn't get here");
+            }
+
             x = r[0];
             y = r[1];
         }
@@ -105,7 +128,7 @@ void Maze::create_initial_path(){
     }
 
     // Replace all stuck tiles with connected
-    this->stuck_to_connected();
+    this->stuck_to_unconnected();
 }
 
 
@@ -296,16 +319,17 @@ int* Maze::find_connected(int x, int y) {
     result[0] = -1;
     result[1] = -1;
 
-    if (y != 0 && this->get_tile(x, (y - 1))->isTempConnected()) {
+    // Check if there is an open path
+    if (y != 0 && this->get_tile(x, (y - 1))->isTempConnected() && this->get_tile(x, y)->top == open) {
         result[0] = x;
         result[1] = y - 1;
-    } else if(y != this->height - 1 && this->get_tile(x, y + 1)->isTempConnected()) {
+    } else if(y != this->height - 1 && this->get_tile(x, y + 1)->isTempConnected() && this->get_tile(x, y)->bot == open) {
         result[0] = x;
         result[1] = y + 1;
-    } else if(x != 0 && this->get_tile(x - 1, y)->isTempConnected()) {
+    } else if(x != 0 && this->get_tile(x - 1, y)->isTempConnected() && this->get_tile(x, y)->left == open) {
         result[0] = x - 1;
         result[1] = y;
-    } else if(x != this->width - 1 && this->get_tile(x + 1, y)->isTempConnected()) {
+    } else if(x != this->width - 1 && this->get_tile(x + 1, y)->isTempConnected() && this->get_tile(x, y)->right == open) {
         result[0] = x + 1;
         result[1] = y;
     }
@@ -317,6 +341,14 @@ void Maze::stuck_to_connected() {
     for(int i=0; i < this->height * this->width; i++) {
         if(this->maze[i]->connection == stuck) {
             this->maze[i]->connection = connected;
+        }
+    }
+}
+
+void Maze::stuck_to_unconnected() {
+    for(int i=0; i < this->height * this->width; i++) {
+        if(this->maze[i]->connection == stuck) {
+            this->maze[i]->connection = unconnected;
         }
     }
 }
