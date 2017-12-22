@@ -10,7 +10,13 @@
 
 class Maze {
 public:
+    int height;
+    int width;
+    Tile** maze;
+
     Maze(int height, int width);
+
+    Tile* get_tile(int x, int y);
 
     void create_initial_path();
     void create_other_paths();
@@ -19,11 +25,6 @@ public:
     void print_connections();
 
 private:
-    Tile** maze;
-    int height;
-    int width;
-
-    Tile* get_tile(int x, int y);
 
     bool is_surrounded(int x, int y);
     bool is_temp_surrounded(int x, int y);

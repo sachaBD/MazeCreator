@@ -3,6 +3,7 @@
 //
 
 #include <cstdio>
+#include <cstdlib>
 #include "Tile.h"
 
 /**
@@ -39,4 +40,41 @@ bool Tile::isTempConnected() {
  */
 bool Tile::isTempOrStuck() {
     return this->connection  == tempConnected || this->connection == stuck;
+}
+
+/**
+ * Left
+ * Top
+ * Right
+ * Bot
+ *
+ * @param dir
+ * @return
+ */
+int* Tile::can_move_dir(int dir) {
+    // Result in order of x, y
+    int* result = (int*) malloc(2 * sizeof(int));
+    result[0] = NULL;
+    result[1] = NULL;
+
+    if(dir == 0 && this->left == open) {
+        result[0] = -1;
+        result[1] = 0;
+    } else if(dir == 1 && this->top == open) {
+        result[0] = 0;
+        result[1] = -1;
+    } else if(dir == 2 && this->right == open) {
+        result[0] = 1;
+        result[1] = 0;
+    } else if(dir == 3 && this->bot == open) {
+        //Cant re-enter the entry
+        if(this->bot == entry) {
+            return result;
+        }
+
+        result[0] = 0;
+        result[1] = 1;
+    }
+
+    return result;
 }

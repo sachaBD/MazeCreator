@@ -15,7 +15,8 @@ enum TileState {
 
 enum Edge {
     open = 0,
-    blocked = 1
+    blocked = 1,
+    entry = 2
 };
 
 class Tile {
@@ -37,6 +38,8 @@ public:
     bool isTempConnected();
 
     bool isTempOrStuck();
+
+    int* can_move_dir(int dir);
 };
 
 

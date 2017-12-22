@@ -90,6 +90,12 @@
 		<Unit filename="/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Maze.h">
 			<Option target="MazeCreator"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/MazeSolver.cpp">
+			<Option target="MazeCreator"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/MazeSolver.h">
+			<Option target="MazeCreator"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Sacha/Documents/Coding Documents/C++/MazeCreator/Tile.cpp">
 			<Option target="MazeCreator"/>
 		</Unit>

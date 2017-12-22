@@ -150,6 +150,33 @@ Maze.cpp.s:
 	$(MAKE) -f CMakeFiles/MazeCreator.dir/build.make CMakeFiles/MazeCreator.dir/Maze.cpp.s
 .PHONY : Maze.cpp.s
 
+MazeSolver.o: MazeSolver.cpp.o
+
+.PHONY : MazeSolver.o
+
+# target to build an object file
+MazeSolver.cpp.o:
+	$(MAKE) -f CMakeFiles/MazeCreator.dir/build.make CMakeFiles/MazeCreator.dir/MazeSolver.cpp.o
+.PHONY : MazeSolver.cpp.o
+
+MazeSolver.i: MazeSolver.cpp.i
+
+.PHONY : MazeSolver.i
+
+# target to preprocess a source file
+MazeSolver.cpp.i:
+	$(MAKE) -f CMakeFiles/MazeCreator.dir/build.make CMakeFiles/MazeCreator.dir/MazeSolver.cpp.i
+.PHONY : MazeSolver.cpp.i
+
+MazeSolver.s: MazeSolver.cpp.s
+
+.PHONY : MazeSolver.s
+
+# target to generate assembly for a file
+MazeSolver.cpp.s:
+	$(MAKE) -f CMakeFiles/MazeCreator.dir/build.make CMakeFiles/MazeCreator.dir/MazeSolver.cpp.s
+.PHONY : MazeSolver.cpp.s
+
 Tile.o: Tile.cpp.o
 
 .PHONY : Tile.o
@@ -216,6 +243,9 @@ help:
 	@echo "... Maze.o"
 	@echo "... Maze.i"
 	@echo "... Maze.s"
+	@echo "... MazeSolver.o"
+	@echo "... MazeSolver.i"
+	@echo "... MazeSolver.s"
 	@echo "... Tile.o"
 	@echo "... Tile.i"
 	@echo "... Tile.s"

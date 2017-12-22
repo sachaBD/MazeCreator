@@ -7,9 +7,11 @@
 
 
 Maze::Maze(int height, int width) {
+    printf("2");
     this->height = height;
     this->width = width;
 
+    printf("1");
     //Create the array
     this->maze = (Tile**)malloc(height * width * sizeof(Tile*));
 
@@ -38,7 +40,7 @@ void Maze::create_initial_path(){
     int y = this->height - 1;
 
     // Enter the maze
-    this->get_tile(x, y)->bot = open;
+    this->get_tile(x, y)->bot = entry;
     this->get_tile(x, y)->connection = connected;
 
     // Traverse the maze until the end of the top of the maze is reached.
@@ -281,7 +283,7 @@ void Maze::print() {
 
     //Print the top level
     for(int w=0; w < this->width; w++) {
-        if (this->maze[w]->top != 0) {
+        if (this->maze[w]->top > 0) {
             printf(" _");
         } else {
             printf("  ");
@@ -292,16 +294,16 @@ void Maze::print() {
     for(int h=0; h < this->height; h++) {
         printf("|");
         for(int w=0; w < this->width; w++) {
-            if(this->maze[h * this->width + w]->bot != 0) {
-                printf("_");
-            } else {
+            if(this->maze[h * this->width + w]->bot != blocked) {
                 printf(" ");
+            } else {
+                printf("_");
             }
 
-            if(this->maze[h * this->width + w]->right != 0) {
-                printf("|");
-            } else {
+            if(this->maze[h * this->width + w]->right != blocked) {
                 printf(" ");
+            } else {
+                printf("|");
             }
         }
         printf("\n");
